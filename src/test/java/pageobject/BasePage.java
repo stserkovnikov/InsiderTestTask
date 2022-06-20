@@ -18,7 +18,10 @@ public class BasePage {
     }
 
     public void AcceptAllCookies() {
-        driver.findElement(By.id("wt-cli-accept-all-btn")).click();
+        By acceptCookies = By.id("wt-cli-accept-all-btn");
+        if (driver.findElements(acceptCookies).size()>0) {
+            driver.findElement(acceptCookies).click();
+        }
     }
 
     public void ScrollToElementIntoMiddle(WebElement element) {

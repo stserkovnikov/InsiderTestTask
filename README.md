@@ -12,4 +12,5 @@ mvn clean test -Dbrowser=firefox
 
 or skip "browser" and it will be run by default in chrome.
 
-Screenshots for failed tests are in "\target\Screenshots". Name of file = Name of method. 
+Allure report:
+mvn allure:serve

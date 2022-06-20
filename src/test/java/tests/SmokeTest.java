@@ -6,7 +6,7 @@ import pageobject.*;
 
 public class SmokeTest extends BaseTest {
 
-    @Test
+    @Test(description = "Main smoke test")
     public void CheckQAJobs() {
         String position = "Quality Assurance";
         String location = "Istanbul, Turkey";
@@ -30,7 +30,7 @@ public class SmokeTest extends BaseTest {
         Assert.assertTrue(leverApplicationPage.isApplyButtonExist());
     }
 
-    @Test
+    @Test(description = "Test for demonstrate making a screenshot on failure")
     public void specialTestForFail() {
         HomePage homePage = new HomePage(getDriver());
         homePage.doSomethingForFail();

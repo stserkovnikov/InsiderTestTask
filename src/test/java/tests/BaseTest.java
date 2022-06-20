@@ -1,5 +1,6 @@
 package tests;
 
+import io.qameta.allure.Allure;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -10,6 +11,7 @@ import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,11 +26,7 @@ public class BaseTest {
     @BeforeMethod
     public void initWebdriver() {
         String browser = System.getProperty("browser");
-        if (browser == null) {
-            browser = "chrome";
-        } else {
-            browser = browser.toLowerCase();
-        }
+        browser = browser == null ? "chrome" : browser.toLowerCase();
         if ("firefox".equals(browser)) {
             driver = new FirefoxDriver();
         } else {
@@ -42,7 +40,11 @@ public class BaseTest {
     @AfterMethod
     public void cleanUp(ITestResult result) {
         try {
-            takeAScreenshotOnFail(result);
+            if (ITestResult.FAILURE == result.getStatus()) {
+                //takeAScreenshotOnFail(result); old implementation
+                Allure.addAttachment("screenshot", new ByteArrayInputStream(((TakesScreenshot) driver).
+                        getScreenshotAs(OutputType.BYTES)));
+            }
         } catch (RuntimeException e) {
             System.out.println("Something wrong in tear down process");
         } finally {
@@ -57,21 +59,19 @@ public class BaseTest {
     }
 
     private void takeAScreenshotOnFail(ITestResult result) {
-        if (ITestResult.FAILURE == result.getStatus()) {
+        try {
+            TakesScreenshot ts = (TakesScreenshot) driver;
+            File source = ts.getScreenshotAs(OutputType.FILE);
             try {
-                TakesScreenshot ts = (TakesScreenshot) driver;
-                File source = ts.getScreenshotAs(OutputType.FILE);
-                try {
-                    Path path = Paths.get(".//target//Screenshots//");
-                    Files.createDirectories(path);
-                    FileHandler.copy(source, new File(path + "//" + result.getName() + ".png"));
-                    System.out.println("Screenshot taken");
-                } catch (IOException e) {
-                    System.out.println("IO exception:" + e.getMessage());
-                }
-            } catch (Exception e) {
-                System.out.println("Exception while taking screenshot " + e.getMessage());
+                Path path = Paths.get(".//target//Screenshots//");
+                Files.createDirectories(path);
+                FileHandler.copy(source, new File(path + "//" + result.getName() + ".png"));
+                System.out.println("Screenshot taken");
+            } catch (IOException e) {
+                System.out.println("IO exception:" + e.getMessage());
             }
+        } catch (Exception e) {
+            System.out.println("Exception while taking screenshot " + e.getMessage());
         }
     }
 }

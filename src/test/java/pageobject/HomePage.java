@@ -23,7 +23,7 @@ public class HomePage extends BasePage {
     }
 
     public void doSomethingForFail() {
-        driver.findElement(By.xpath("we cannot find this")).click();
+        driver.findElement(By.xpath("//div[text()='we cannot find this']")).click();
     }
 
 }
