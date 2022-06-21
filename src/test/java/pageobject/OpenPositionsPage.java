@@ -21,6 +21,10 @@ public class OpenPositionsPage extends BasePage {
                 .until(ExpectedConditions.presenceOfElementLocated(By.id(menuLocator)));
 
         menu.click();
+        if (driver.findElements(By.xpath(elementLocator)).size()==0) {
+            menu.click();
+            menu.click();
+        }
         driver.findElement(By.xpath(elementLocator)).click();
         waitForJQueryLoad();
     }
