@@ -1,5 +1,6 @@
 package tests;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import io.qameta.allure.Allure;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -28,8 +29,10 @@ public class BaseTest {
         String browser = System.getProperty("browser");
         browser = browser == null ? "chrome" : browser.toLowerCase();
         if ("firefox".equals(browser)) {
+            WebDriverManager.firefoxdriver().setup();
             driver = new FirefoxDriver();
         } else {
+            WebDriverManager.chromedriver().setup();
             driver = new ChromeDriver();
         }
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
@@ -41,7 +44,6 @@ public class BaseTest {
     public void cleanUp(ITestResult result) {
         try {
             if (ITestResult.FAILURE == result.getStatus()) {
-                //takeAScreenshotOnFail(result); old implementation
                 Allure.addAttachment("screenshot", new ByteArrayInputStream(((TakesScreenshot) driver).
                         getScreenshotAs(OutputType.BYTES)));
             }
